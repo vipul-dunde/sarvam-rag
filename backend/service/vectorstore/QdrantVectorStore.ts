@@ -9,7 +9,7 @@ class QdrantLCVectorStore {
       await langChainHelperService.getEmbeddingsFromProvider(llmProvider);
     return QdrantVectorStore.fromExistingCollection(embeddings, {
       url: process.env.QDRANT_URL,
-      collectionName: "SarvamCollectionGoogle" || process.env.COLLECTION_NAME,
+      collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME,
       apiKey: process.env.QDRANT_API_KEY,
     });
   }
@@ -22,7 +22,7 @@ class QdrantLCVectorStore {
       await langChainHelperService.getEmbeddingsFromProvider(llmProvider);
     const vectorStore: QdrantVectorStore = new QdrantVectorStore(embeddings, {
       url: process.env.QDRANT_URL,
-      collectionName: "SarvamCollectionGoogle" || process.env.COLLECTION_NAME,
+      collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME,
       apiKey: process.env.QDRANT_API_KEY,
     });
     await vectorStore.addDocuments(documents, { customPayload: [] });

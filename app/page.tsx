@@ -87,9 +87,6 @@ export default function ChatPage() {
                                 <div className="font-semibold text-gray-900">
                                     {message.question}
                                 </div>
-                                <div className="text-gray-500 text-sm">
-                                    {message.timestamp}
-                                </div>
                             </div>
                             {message.response && (
                                 <div className="text-gray-800 bg-gray-100 p-2 rounded-md mt-1">

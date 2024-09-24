@@ -8,7 +8,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const { searchParams } = new URL(request.url);
     const filename: string = searchParams.get('filename') as string;
     if (filename != null) {
-        const blob = await put(filename, request.body, {
+        const blob = await put(filename, request.body as ReadableStream<Uint8Array>, {
             access: 'public',
         });
         console.log(blob);
