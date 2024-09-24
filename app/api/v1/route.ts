@@ -1,14 +1,17 @@
-import { NextRequest, NextResponse } from "next/server";
+import {put, PutBlobResult} from '@vercel/blob';
+import { NextResponse } from 'next/server';
 
-async function getHandler(request: NextRequest) {
-    try {
-        return NextResponse.json({ status: "ok" });
-    } catch (error) {
-        return NextResponse.json(
-            { error: "Internal server error" },
-            { status: 500 },
-        );
+export async function POST(request: Request): Promise<NextResponse> {
+    const { searchParams } = new URL(request.url);
+    const filename: string = searchParams.get('filename') as string;
+
+    if (filename != null) {
+        const blob: PutBlobResult = await put(filename, request.body, {
+            access: 'public',
+        });
+        return NextResponse.json(blob, {status: 200});
     }
+
+    return NextResponse.json({ error: 'File provided failed!' }, { status: 500 });
 }
 
-export const GET = getHandler;
