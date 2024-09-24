@@ -27,13 +27,8 @@ class LangChainDocumentService {
   public async loadPDFWithBlobURL(url: string): Promise<Document[]> {
     const nike10kPdfPath : any = url;
     const fetchResponse = await fetch(nike10kPdfPath);
-    // const splitter = new RecursiveCharacterTextSplitter({
-    //   chunkSize: 4000,
-    //   chunkOverlap: 600,
-    // });
     const loader: PDFLoader = new PDFLoader(await fetchResponse.blob() as Blob);
-    const docs: Document[] = await loader.load();
-    return docs;
+    return  await loader.load();
   }
 }
 

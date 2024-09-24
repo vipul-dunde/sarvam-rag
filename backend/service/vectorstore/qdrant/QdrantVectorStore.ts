@@ -1,7 +1,8 @@
 import {LLMProvider} from "@/backend/service/support/LLMProviderMapper";
 import { type Document as LangChainDocument } from "@langchain/core/documents";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import langChainHelperService from "@/backend/service/vectorstore/LangChainHelperService";
+import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
+import { v4 as uuidv4 } from "uuid";
 
 class QdrantLCVectorStore {
   public async getQdrantVectorStore(llmProvider: LLMProvider) {

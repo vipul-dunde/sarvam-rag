@@ -1,7 +1,7 @@
 import {put} from '@vercel/blob';
 import {NextResponse} from 'next/server';
-import langChainDocumentService from "@/backend/service/vectorstore/LangChainDocumentService";
-import {qdrantLCVectorStore} from "@/backend/service/vectorstore/QdrantVectorStore";
+import langChainDocumentService from "@/backend/service/langchain/LangChainDocumentService";
+import {qdrantLCVectorStore} from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
 import {LLMProvider} from "@/backend/service/support/LLMProviderMapper";
 
 export async function POST(request: Request): Promise<NextResponse> {

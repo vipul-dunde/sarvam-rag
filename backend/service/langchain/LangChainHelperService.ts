@@ -1,6 +1,6 @@
 import { LLMProvider} from "@/backend/service/support/LLMProviderMapper";
-import googleAIAdapter from "@/backend/service/aimodels/googleai/GoogleAIAdapter";
-import openAIAdapter from "@/backend/service/aimodels/openai/OpenAIAdapter";
+import googleAIAdapter from "@/backend/service/llm/googleai/GoogleAIAdapter";
+import openAIAdapter from "@/backend/service/llm/openai/OpenAIAdapter";
 
 class LangChainHelperService {
   public async getInitialisedVectorAndLLMFromProviderWithLangChain(

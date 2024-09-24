@@ -5,7 +5,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components/ui/button'; // ShadCN button component
 import { Input } from '@/components/ui/input';   // ShadCN input component
 import { Textarea } from '@/components/ui/textarea';
-import {ReloadIcon, UploadIcon, TriangleRightIcon, StopwatchIcon} from "@radix-ui/react-icons";  // ShadCN textarea component
+import {ReloadIcon, UploadIcon, TriangleRightIcon} from "@radix-ui/react-icons";  // ShadCN textarea component
 
 export default function ChatPage() {
     const inputFileRef = useRef<HTMLInputElement>(null);
@@ -20,12 +20,12 @@ export default function ChatPage() {
             throw new Error('No file selected');
         }
 
-        const file = inputFileRef.current.files[0];
+        const file = inputFileRef.current?.files[0];
         setLoadingUpload(true); // Set loading state for file upload
 
         try {
             const response = await fetch(
-                `/api/v1?filename=${file.name}`,
+                `/api/v1/vectorstore?filename=${file.name}`,
                 {
                     method: 'POST',
                     body: file,
@@ -110,7 +110,7 @@ export default function ChatPage() {
                 </div>}
 
             {/* Chat input and file upload form */}
-            <form onSubmit={handleChatSubmit} className="mt-4">
+            <form onSubmit={handleChatSubmit} className="mt-6">
                 <div className="flex space-x-2">
                     {/* Textarea for message input */}
                     <Input
