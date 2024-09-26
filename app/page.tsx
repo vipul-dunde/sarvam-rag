@@ -284,7 +284,7 @@ export default function ChatPage() {
                       </div>
 
                       <SyntaxHighlighter
-                        language="bash"
+                        language="markdown"
                         style={vscDarkPlus}
                         customStyle={{
                           backgroundColor: "black",

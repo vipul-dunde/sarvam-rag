@@ -1,18 +1,26 @@
 
 ## Sarvam RAG
 
+**I opted for Next.js over FastAPI due to time constraints, primarily because:**
+   1. It simplifies integration with the UI, API development, and deployment.
+   2. It offers robust support for LLM-related applications, similar to Python.
+   3. Since I’m already working extensively with Next.js, I can complete the project more efficiently.
+
+I am also proficient in Python, ensuring flexibility for future needs.
+
+
 #### Note: Pushing `.env` files to GitHub is not recommended. The `.env` file is included in this repository for easier deployment and testing purposes locally.
 
 ### Overview
 The Sarvam RAG system is designed to meet all the requirements outlined in the problem statement. You can view the full problem details [here](https://docs.google.com/document/d/1y6Ol_9cLP1VPrHUR7NfXcYtAECZRXAhmmTKM5sc24HQ/edit).
 
 ### Key Features:
-1. **Retrieval-Augmented Generation (RAG)**: Implemented using Qdrant Vector Store and Google Generative AI API.
-2. **Agentic Flow**: Integrated with the Math Tool and Vector Store Tool for enhanced functionality.
-3. **Chat Functionality**: Engage with the model, upload PDF files, and manage the vector store by clearing data.
-4. **Document Similarity**: Retrieve similar documents from the vector store based on user input.
-5. **Unified Chat Platform**: A dedicated platform to test and validate all features in one place.
-6. **Audio Integration**: Added text-to-speech capabilities using Sarvam's API for an enhanced experience.
+   1. **Retrieval-Augmented Generation (RAG)**: Implemented using Qdrant Vector Store and Google Generative AI API.
+   2. **Agentic Flow**: Integrated with the Math Tool and Vector Store Tool for enhanced functionality.
+   3. **Chat Functionality**: Engage with the model, upload PDF files, and manage the vector store by clearing data.
+   4. **Document Similarity**: Retrieve similar documents from the vector store based on user input.
+   5. **Unified Chat Platform**: A dedicated platform to test and validate all features in one place.
+   6. **Audio Integration**: Added text-to-speech capabilities using Sarvam's API for an enhanced experience.
 
 ---
 
