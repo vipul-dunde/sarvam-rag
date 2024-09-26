@@ -3,12 +3,15 @@ import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import VectorStoreTool from "@/backend/service/tools/VectorStoreTool";
 import { AIMessageChunk } from "@langchain/core/messages";
 import { getDataFromTools } from "@/backend/service/support/ToolMapper";
+import MathematicsTool from "@/backend/service/tools/MathematicsTool";
 
 class AgentService {
   private async getTools(llm: ChatGoogleGenerativeAI): Promise<Tool[]> {
     let tools: Tool[] = [];
     const vectorStoreTool: VectorStoreTool = new VectorStoreTool();
     tools.push((await vectorStoreTool.initialiseVectorStoreTool(llm)) as any);
+    const mathematicsTool: MathematicsTool = new MathematicsTool();
+    tools.push((await mathematicsTool.initialiseMathTool()) as any);
     return tools;
   }
 
@@ -37,6 +40,7 @@ class AgentService {
       const toolDataAsString = await getDataFromTools(
         query,
         toolResponse.tool_calls[0]?.name as string,
+        toolResponse.tool_calls,
       );
       const finalLLMResponse = await this.makeFinalLLMCall(
         llm,
@@ -59,6 +63,7 @@ class AgentService {
       toolName: "",
     };
   }
+
   public async initialiseAgent(query: string, llm: ChatGoogleGenerativeAI) {
     const tools: Tool[] = await this.getTools(llm);
     const bindedLLM = await llm.bindTools(tools);

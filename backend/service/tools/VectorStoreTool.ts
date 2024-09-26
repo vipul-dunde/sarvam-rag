@@ -8,12 +8,9 @@ export const VECTOR_STORE_TOOL = "vectorStoreTool";
 class VectorStoreTool {
   public async initialiseVectorStoreTool(llm: any) {
     const vectorStoreTool = tool(
-      async function ({ descriptionAndTopics }): Promise<any> {
-        return {
-          descriptionAndTopics: descriptionAndTopics,
-          output: "insideLLM.content",
-        };
-      },
+      async function ({ descriptionAndTopics }: any): Promise<any> {}.bind(
+        this,
+      ),
       {
         name: VECTOR_STORE_TOOL,
         description:

@@ -9,10 +9,22 @@ import {
   UploadIcon,
   TriangleRightIcon,
   SpeakerLoudIcon,
+  TrashIcon,
 } from "@radix-ui/react-icons";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
-import { PutBlobResult } from "@vercel/blob"; // ShadCN textarea component
+import { PutBlobResult } from "@vercel/blob";
+import axios from "axios"; // ShadCN textarea component
+
+interface Message {
+  toolName: keyof typeof toolMapper; // Ensure that toolName is one of the keys
+}
+
+const toolMapper = {
+  vectorStoreTool: "VectorStoreTool",
+  webQueryTool: "WebQueryTool",
+  mathematicsTool: "MathematicsTool",
+};
 
 export default function ChatPage() {
   const inputFileRef = useRef<HTMLInputElement>(null);
@@ -24,13 +36,15 @@ export default function ChatPage() {
       response: string;
       fileUrl?: string;
       coreresponse?: string;
+      isToolUsed?: boolean;
+      toolName?: string;
     }[]
   >([]);
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioAvailable, setAudioAvailable] = useState(false);
-
+  const [isToolsEnabled, setIsToolsEnabled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -38,6 +52,10 @@ export default function ChatPage() {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [messages]);
+
+  const handleToggleTools = () => {
+    setIsToolsEnabled((prev) => !prev);
+  };
 
   const handleAudioClick = async (text: string) => {
     try {
@@ -121,6 +139,21 @@ export default function ChatPage() {
     }
   };
 
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
+  const handleClearVectorStore = async () => {
+    setLoadingDelete(true);
+    try {
+      await axios.delete("/api/v1/vectorstore/delete"); // Adjust the API endpoint as necessary
+      alert("Vector store cleared successfully!");
+    } catch (error) {
+      console.error("Failed to clear vector store:", error);
+      alert("Failed to clear vector store. Please try again.");
+    } finally {
+      setLoadingDelete(false);
+    }
+  };
+
   function splitIntoLines(content: string, wordsPerLine: number): string {
     const words = content.split(" ");
     let result = "";
@@ -140,25 +173,52 @@ export default function ChatPage() {
     setLoadingChat(true); // Set loading state for chat submission
 
     try {
-      const response = await fetch("/api/v1/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ query: chatInput }),
-      });
+      if (!isToolsEnabled) {
+        const response = await fetch("/api/v1/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query: chatInput }),
+        });
 
-      const data = await response.json();
-      setMessages((prev) => [
-        ...prev,
-        {
-          question: chatInput,
-          response: splitIntoLines(data.content, 12) || data.error,
-          coreresponse: data.content.toString(),
-        },
-      ]);
+        const data = await response.json();
+        setMessages((prev) => [
+          ...prev,
+          {
+            question: chatInput,
+            response: splitIntoLines(data.content, 12) || data.error,
+            coreresponse: data.content.toString(),
+            toolName: "",
+            isToolUsed: false,
+          },
+        ]);
 
-      setChatInput("");
+        setChatInput("");
+      } else {
+        const response = await fetch("/api/v1/agent", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ query: chatInput }),
+        });
+        const data = await response.json();
+        setMessages((prev) => [
+          ...prev,
+          {
+            question: chatInput,
+            response:
+              splitIntoLines(data.content.llmResponse.toString(), 12) ||
+              data.error,
+            coreresponse: data.content.llmResponse.toString(),
+            toolName: data.content.toolName,
+            isToolUsed: data.content.toolUsed,
+          },
+        ]);
+
+        setChatInput("");
+      }
     } catch (error) {
       console.error("Error submitting chat:", error);
     } finally {
@@ -174,7 +234,6 @@ export default function ChatPage() {
         </h2>
       </div>
       <div className="mx-auto flex-grow">
-        {/* Chat window */}
         <div className="max-w-6xl mx-auto">
           {messages.length !== 0 && (
             <div>
@@ -206,6 +265,7 @@ export default function ChatPage() {
                           )}
                         </Button>
                       </div>
+
                       <SyntaxHighlighter
                         language="bash"
                         style={vscDarkPlus}
@@ -217,6 +277,20 @@ export default function ChatPage() {
                       >
                         {message.response && message.response}
                       </SyntaxHighlighter>
+                      <p className="font-light text-xs text-white my-auto transition-opacity duration-30000 hover:opacity-60">
+                        {message.isToolUsed && (
+                          <span>
+                            Generated using{" "}
+                            <span className="font-bold text-md">
+                              {
+                                toolMapper[
+                                  message.toolName as keyof typeof toolMapper
+                                ]
+                              }
+                            </span>
+                          </span>
+                        )}
+                      </p>
                     </div>
                   </div>
                 ))}
@@ -265,6 +339,40 @@ export default function ChatPage() {
                 <ReloadIcon className="h-4 w-4 animate-spin" />
               ) : (
                 <TriangleRightIcon className="h-6 w-6" />
+              )}
+            </Button>
+          </div>
+          <div className="flex items-center justify-between mt-4">
+            <label className="flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                className="hidden"
+                checked={isToolsEnabled}
+                onChange={handleToggleTools}
+              />
+              <div
+                className={`w-10 h-5 rounded-full ${isToolsEnabled ? "bg-green-500" : "bg-gray-300"} transition-colors relative`}
+              >
+                <div
+                  className={`absolute w-4 h-4 bg-white rounded-full transition-transform transform ${isToolsEnabled ? "translate-x-5" : "translate-x-0"}`}
+                />
+              </div>
+              <span className="ml-2 text-md">
+                {isToolsEnabled ? "Tools Enabled" : "Enable Tools"}
+              </span>
+            </label>
+            <Button
+              onClick={handleClearVectorStore}
+              disabled={loadingDelete}
+              className="flex items-center border-gray-300"
+            >
+              {loadingDelete ? (
+                <span>Clearing...</span>
+              ) : (
+                <>
+                  <TrashIcon className="h-5 w-5 mr-2" />
+                  <span>Clear Vector Store</span>
+                </>
               )}
             </Button>
           </div>

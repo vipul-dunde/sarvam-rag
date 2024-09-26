@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
-import { Tool } from "langchain/tools";
 import { VECTOR_STORE_TOOL } from "@/backend/service/tools/VectorStoreTool";
 
 export const WEB_QUERY_TOOL = "webQueryTool";
