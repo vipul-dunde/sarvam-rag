@@ -1,28 +1,48 @@
 import { z } from "zod";
-import { CallbackManagerForToolRun } from "@langchain/core/callbacks/manager";
-import { RunnableConfig } from "@langchain/core/runnables";
-import { StructuredTool } from "@langchain/core/tools";
+import { tool } from "@langchain/core/tools";
+import { Tool } from "langchain/tools";
+import { PrismaClient } from "@prisma/client";
+const prismaDB: PrismaClient = new PrismaClient();
+export const VECTOR_STORE_TOOL = "vectorStoreTool";
 
-const schema = z.object({
-    label: z.string().describe("A minimal (usually one or two words) label/name displayed when collecting input from the user."),
-    description: z.string().describe("A more detailed description of the input being requested from the user."),
-    required: z.boolean().default(true).describe("If the input is strictly required or not."),
-    multiline: z.boolean().default(false).describe("If the input is expected to be large or requires multiple lines.")
-}).required();
+class VectorStoreTool {
+  public async initialiseVectorStoreTool(llm: any) {
+    const vectorStoreTool = tool(
+      async function ({ descriptionAndTopics }): Promise<any> {
+        return {
+          descriptionAndTopics: descriptionAndTopics,
+          output: "insideLLM.content",
+        };
+      },
+      {
+        name: VECTOR_STORE_TOOL,
+        description:
+          "A tool for retrieving knowledge from a vector store. Use this tool to gather information needed to respond to any user questions.",
+        schema: await this.getVectorStoreSchema(),
+      },
+    );
+    return vectorStoreTool;
+  }
 
-export const VECTOR_STORE_TOOL_NAME = "vector_store_tool";
+  private async getVectorStoreSchema(query?: string) {
+    const topics = await prismaDB.topics.findMany();
+    const documents = topics.map(
+      (topic, index) =>
+        `${index + 1} - ${topic.fileName} -> ${topic.Description}\n`,
+    );
+    return z
+      .object({
+        descriptionAndTopics: z
+          .string()
+          .describe(
+            `Utilize this tool to efficiently retrieve knowledge from a vector store. This tool is specifically designed to gather relevant information for addressing user inquiries. Please ensure that the vector store strictly covers the following topics: ${documents.toString()}. Your responses should be clear, concise, and directly related to the specified topics.`,
+          ),
+        output: z.string().describe("Output of the query"),
+      })
+      .required();
+  }
 
-export class VectorStoreTool extends StructuredTool {
-    readonly name = VECTOR_STORE_TOOL_NAME;
-    readonly description = "This Tool is used when user query is non-generic and we need to fetch data from Vector Store.";
-    readonly schema = schema;
-
-    async _call(
-        _input: z.output<typeof schema>,
-        _runManager?: CallbackManagerForToolRun,
-        _parentConfig?: RunnableConfig,
-    ): Promise<undefined> {
-        // no need to return anything, this tool won't actually be invoked.
-        return undefined;
-    }
+  public async processWithVectorStore(query: string) {}
 }
+
+export default VectorStoreTool;

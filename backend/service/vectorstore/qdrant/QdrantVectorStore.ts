@@ -3,8 +3,21 @@ import { type Document as LangChainDocument } from "@langchain/core/documents";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
 import { QdrantClient } from "@qdrant/qdrant-js";
+import { PrismaClient } from "@prisma/client";
 
 class QdrantLCVectorStore {
+  public async getSimilarDocs(query: string) {
+    const vectorStore = await qdrantLCVectorStore.getQdrantVectorStore(
+      LLMProvider.GoogleAI,
+    );
+    return await vectorStore.similaritySearch(query, 3);
+  }
+
+  public async getSimilarDocsAsString(query: string) {
+    const similarDocs = await this.getSimilarDocs(query);
+    return similarDocs.map((doc) => doc.pageContent).toString();
+  }
+
   public async getQdrantVectorStore(llmProvider: LLMProvider) {
     try {
       const embeddings =
@@ -48,6 +61,8 @@ class QdrantLCVectorStore {
       await client.deleteCollection(
         process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
       );
+      const prismaDB = new PrismaClient();
+      await prismaDB.topics.deleteMany();
       await client.createCollection(
         process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
         {

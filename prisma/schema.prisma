@@ -1,0 +1,16 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "fullTextIndex"]
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = "mysql://uamhm6vw9ne0qbjk:Bp4K4hSbwxkdIFGd9sCz@bwriwv4d5ava1olccuqh-mysql.services.clever-cloud.com:3306/bwriwv4d5ava1olccuqh"
+  relationMode = "prisma"
+}
+
+model Topics {
+  id          Int    @id @default(autoincrement())
+  fileName    String @db.Text
+  Description String @db.Text
+}

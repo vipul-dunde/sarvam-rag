@@ -3,6 +3,9 @@ import { put } from "@vercel/blob";
 import langChainDocumentService from "@/backend/service/langchain/LangChainDocumentService";
 import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
 import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+import googleAIAdapter from "@/backend/service/llm/googleai/GoogleAIAdapter";
+import { PrismaClient } from "@prisma/client";
+const prismaDB = new PrismaClient();
 
 async function postHandler(request: Request) {
   try {
@@ -18,6 +21,22 @@ async function postHandler(request: Request) {
     const document = await langChainDocumentService.loadPDFWithBlobURL(
       blob.url,
     );
+    const llm = await googleAIAdapter.getInitialisedVectorStoreAndLLM();
+    const llmResponse = await llm.invoke(
+      "Create 30 Words Description What is this PDF and content about" +
+        document[0].pageContent,
+    );
+
+    try {
+      await prismaDB.topics.create({
+        data: {
+          fileName: filename as string,
+          Description: llmResponse.content as string,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
     await qdrantLCVectorStore.manageQdrantVectorStore(
       LLMProvider.GoogleAI,
       document,

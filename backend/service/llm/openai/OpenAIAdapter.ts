@@ -10,6 +10,7 @@ class OpenAIAdapter {
 
   public async getInitialisedVectorStoreAndLLM(): Promise<OpenAI> {
     return new OpenAI({
+      model: "gpt-3.5-turbo",
       apiKey: process.env.OPENAI_API_KEY,
       temperature: 0.8,
     });
