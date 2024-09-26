@@ -24,7 +24,7 @@ class SarvamService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "api-subscription-key": process.env.SARVAM_SUBSCRIPTION_KEY,
+          "api-subscription-key": process.env.SARVAM_SUBSCRIPTION_KEY as string,
         },
       };
       const response = await fetch("https://api.sarvam.ai/text-to-speech", {

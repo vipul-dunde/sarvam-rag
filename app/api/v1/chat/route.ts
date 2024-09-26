@@ -6,7 +6,6 @@ import { AIMessageChunk } from "@langchain/core/messages";
 async function postHandler(request: Request) {
   try {
     const body = await request.json();
-    const toolId = body?.toolId || "vectorStoreTool";
     const llm: ChatGoogleGenerativeAI =
       await googleAIAdapter.getInitialisedVectorStoreAndLLM();
     const prompt: string = `<prompt>

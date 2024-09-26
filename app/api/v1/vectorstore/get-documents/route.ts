@@ -12,7 +12,7 @@ async function getHandler(request: Request) {
     );
     const documents: DocumentInterface[] = await vectorStore.similaritySearch(
       query,
-      2,
+      5,
     );
     const nextResponse = {
       status: 200,

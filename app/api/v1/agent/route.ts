@@ -2,11 +2,13 @@ import { NextResponse } from "next/server";
 import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
 import googleAIAdapter from "@/backend/service/llm/googleai/GoogleAIAdapter";
 import agentService from "@/backend/service/agent/AgentService";
+import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const llm = await googleAIAdapter.getInitialisedVectorStoreAndLLM();
+    const llm: ChatGoogleGenerativeAI =
+      await googleAIAdapter.getInitialisedVectorStoreAndLLM();
 
     if (!llm.bindTools) {
       throw new Error("This model does not support tools.");

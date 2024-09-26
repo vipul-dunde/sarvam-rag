@@ -232,7 +232,24 @@ export default function ChatPage() {
         <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent animate-gradient">
           Chat Platform
         </h2>
+        <h2 className="text-3xl font-bold mb-6 text-black">
+          <a href="/api-page" className="underline">
+            Api Docs
+          </a>
+        </h2>
+        <div className="text-3xl font-bold mb-6 text-black">
+          <Button
+            className="font-bold bg-amber-500"
+            onClick={() => {
+              window.location.href =
+                "https://github.com/vipul-dunde/sarvam-rag";
+            }}
+          >
+            GitHub
+          </Button>
+        </div>
       </div>
+
       <div className="mx-auto flex-grow">
         <div className="max-w-6xl mx-auto">
           {messages.length !== 0 && (
