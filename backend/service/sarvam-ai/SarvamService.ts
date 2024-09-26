@@ -24,7 +24,7 @@ class SarvamService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "api-subscription-key": "f7bd734d-afd5-443f-808f-5a8ce7c8d4a8",
+          "api-subscription-key": process.env.SARVAM_SUBSCRIPTION_KEY,
         },
       };
       const response = await fetch("https://api.sarvam.ai/text-to-speech", {
@@ -41,15 +41,11 @@ class SarvamService {
 
   public async getSpeechFromText(text: string): Promise<string[]> {
     try {
-      // const llm = await googleAIAdapter.getInitialisedVectorStoreAndLLM();
-      // const prompt: string = `here is text ${text}, which is failing on text-to-speech model, Strictly create plain text from given text, without formattings, if contains code replace with response explaining code. Make sure to just return improved text do not return anything extra.`;
-      // const response = await llm.invoke(prompt);
       const response = { content: text };
       const result = await this.splitStringIntoChunks(
         response.content as string,
       );
-      const audioResponses = await this.runSarvamTextSpeechAPI(result);
-      return audioResponses;
+      return await this.runSarvamTextSpeechAPI(result);
     } catch (error) {
       throw new Error("Error in getSpeechFromText " + (error as Error).message);
     }

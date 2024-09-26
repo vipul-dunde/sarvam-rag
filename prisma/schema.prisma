@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider     = "mysql"
-  url          = "mysql://uamhm6vw9ne0qbjk:Bp4K4hSbwxkdIFGd9sCz@bwriwv4d5ava1olccuqh-mysql.services.clever-cloud.com:3306/bwriwv4d5ava1olccuqh"
+  url          = env("DATABASE_URL")
   relationMode = "prisma"
 }
 
