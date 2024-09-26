@@ -1,18 +1,27 @@
-import {LLMProvider} from "@/backend/service/support/LLMProviderMapper";
+import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
 import { type Document as LangChainDocument } from "@langchain/core/documents";
 import { QdrantVectorStore } from "@langchain/qdrant";
 import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
-import { v4 as uuidv4 } from "uuid";
+import { QdrantClient } from "@qdrant/qdrant-js";
 
 class QdrantLCVectorStore {
   public async getQdrantVectorStore(llmProvider: LLMProvider) {
-    const embeddings =
-      await langChainHelperService.getEmbeddingsFromProvider(llmProvider);
-    return QdrantVectorStore.fromExistingCollection(embeddings, {
-      url: process.env.QDRANT_URL,
-      collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME,
-      apiKey: process.env.QDRANT_API_KEY,
-    });
+    try {
+      const embeddings =
+        await langChainHelperService.getEmbeddingsFromProvider(llmProvider);
+      return QdrantVectorStore.fromExistingCollection(embeddings, {
+        url: process.env.QDRANT_URL as string,
+        collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
+        apiKey: process.env.QDRANT_API_KEY as string,
+      });
+    } catch (error) {
+      console.error(
+        `Error getting Qdrant Vector Store: ${(error as Error).message}`,
+      );
+      throw new Error(
+        `Error getting Qdrant Vector Store: ${(error as Error).message}`,
+      );
+    }
   }
 
   public async manageQdrantVectorStore(
@@ -22,12 +31,37 @@ class QdrantLCVectorStore {
     const embeddings =
       await langChainHelperService.getEmbeddingsFromProvider(llmProvider);
     const vectorStore: QdrantVectorStore = new QdrantVectorStore(embeddings, {
-      url: process.env.QDRANT_URL,
-      collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME,
-      apiKey: process.env.QDRANT_API_KEY,
+      url: process.env.QDRANT_URL as string,
+      collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
+      apiKey: process.env.QDRANT_API_KEY as string,
     });
     await vectorStore.addDocuments(documents, { customPayload: [] });
     return vectorStore;
+  }
+
+  public async clearQdrantVectorStore(llmProvider: LLMProvider) {
+    try {
+      const client: QdrantClient = new QdrantClient({
+        url: process.env.QDRANT_URL,
+        apiKey: process.env.QDRANT_API_KEY,
+      });
+      await client.deleteCollection(
+        process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
+      );
+      await client.createCollection(
+        process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
+        {
+          vectors: { size: 768, distance: "Cosine" },
+        },
+      );
+    } catch (error) {
+      console.error(
+        `Error clearing Qdrant Vector Store: ${(error as Error).message}`,
+      );
+      throw new Error(
+        `Error clearing Qdrant Vector Store: ${(error as Error).message}`,
+      );
+    }
   }
 }
 

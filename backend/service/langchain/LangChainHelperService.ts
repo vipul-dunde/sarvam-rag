@@ -1,4 +1,4 @@
-import { LLMProvider} from "@/backend/service/support/LLMProviderMapper";
+import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
 import googleAIAdapter from "@/backend/service/llm/googleai/GoogleAIAdapter";
 import openAIAdapter from "@/backend/service/llm/openai/OpenAIAdapter";
 
