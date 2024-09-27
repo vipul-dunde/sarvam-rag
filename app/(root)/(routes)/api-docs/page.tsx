@@ -213,7 +213,7 @@ const ApiTable = () => {
               {responses[api.name] && (
                 <div className="mt-4 bg-black p-3 rounded-lg">
                   <p className="text-white font-mono text-xs">Response:</p>
-                  <pre className="font-mono text-sm bg-black p-3 rounded-md text-white">
+                  <pre className="font-mono text-md bg-black p-3 rounded-md text-white">
                     {responses[api.name]}
                   </pre>
                 </div>

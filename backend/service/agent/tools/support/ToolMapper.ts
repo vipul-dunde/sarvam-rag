@@ -1,12 +1,10 @@
-import { VECTOR_STORE_TOOL } from "@/backend/service/tools/VectorStoreTool";
+import { VECTOR_STORE_TOOL } from "@/backend/service/agent/tools/vector-store/VectorStoreTool";
 import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
-import { MATHEMATICS_TOOL } from "@/backend/service/tools/MathematicsTool";
-import MathematicsTool from "@/backend/service/tools/MathematicsTool";
+import { MATHEMATICS_TOOL } from "@/backend/service/agent/tools/math-tool/MathematicsTool";
+import MathematicsTool from "@/backend/service/agent/tools/math-tool/MathematicsTool";
 import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
-import sarvamLanguageTool, {
-  SARVAM_LANGUAGE_TOOL,
-} from "@/backend/service/tools/SarvamLanguageTool";
-import SarvamLanguageTool from "@/backend/service/tools/SarvamLanguageTool";
+import { SARVAM_LANGUAGE_TOOL } from "@/backend/service/agent/tools/sarvam-tool/SarvamLanguageTool";
+import SarvamLanguageTool from "@/backend/service/agent/tools/sarvam-tool/SarvamLanguageTool";
 
 export enum ToolProvider {
   VectorStoreTool = VECTOR_STORE_TOOL as any,

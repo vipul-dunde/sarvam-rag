@@ -4,20 +4,19 @@ import { tool } from "@langchain/core/tools";
 export const MATHEMATICS_TOOL = "mathematicsTool";
 
 interface MathOperands {
-  operands: number[]; // or whatever type operands should be
+  operands: number[];
 }
 
 interface MathToolArgs extends MathOperands {
-  operation: string; // Define the operation as a string, or use a union type for specific operations
+  operation: string;
 }
 
 class MathTool {
   public async initialiseMathTool() {
-    const mathematicsTool = tool(
-      async function ({
-        operation,
-        operands,
-      }: MathToolArgs): Promise<any> {}.bind(this),
+    return tool(
+      async function ({ operation, operands }: MathToolArgs): Promise<any> {
+        console.log(operation, operands);
+      }.bind(this),
       {
         name: MATHEMATICS_TOOL,
         description:
@@ -25,7 +24,6 @@ class MathTool {
         schema: await this.getMathToolSchema(),
       },
     );
-    return mathematicsTool;
   }
 
   private async getMathToolSchema() {

@@ -3,12 +3,12 @@ import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
 import { OpenApiToolkit } from "langchain/agents/toolkits";
 import { JsonSpec } from "langchain/tools";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { translateOpenAPISpec } from "@/backend/service/tools/openAPiSpec/translateOpenAPISpec";
+import { translateOpenAPISpec } from "@/backend/service/agent/tools/support/openapi-specs/OpenAPISpecifications";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
 import { StructuredToolInterface } from "@langchain/core/tools";
 
-class SarvamAIToolkit {
+class SarvamAICallingToolkit {
   public async builtAPICallingToolKit(
     llmOption: LLMProvider,
     query: string,
@@ -62,5 +62,6 @@ class SarvamAIToolkit {
     return JSON.stringify(response);
   }
 }
-const sarvamAIToolkit: SarvamAIToolkit = new SarvamAIToolkit();
-export default sarvamAIToolkit;
+const sarvamAIApiCallingToolkit: SarvamAICallingToolkit =
+  new SarvamAICallingToolkit();
+export default sarvamAIApiCallingToolkit;

@@ -1,12 +1,12 @@
 import { Tool } from "langchain/tools";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import VectorStoreTool from "@/backend/service/tools/VectorStoreTool";
+import VectorStoreTool from "@/backend/service/agent/tools/vector-store/VectorStoreTool";
 import { AIMessageChunk } from "@langchain/core/messages";
-import { getDataFromTools } from "@/backend/service/support/ToolMapper";
-import MathematicsTool from "@/backend/service/tools/MathematicsTool";
+import { getDataFromTools } from "@/backend/service/agent/tools/support/ToolMapper";
+import MathematicsTool from "@/backend/service/agent/tools/math-tool/MathematicsTool";
 import { ChatOpenAI } from "@langchain/openai";
 import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
-import SarvamLanguageTool from "@/backend/service/tools/SarvamLanguageTool";
+import SarvamLanguageTool from "@/backend/service/agent/tools/sarvam-tool/SarvamLanguageTool";
 
 class AgentService {
   private async getTools(
@@ -46,10 +46,11 @@ class AgentService {
     llm: ChatGoogleGenerativeAI | ChatOpenAI,
     llmProvider: LLMProvider,
   ) {
-    let prompt = `The user has submitted the following query: "${query}".\n
+    let prompt: string = `The user has submitted the following query: "${query}".\n
 1. First, review the tool descriptions to determine if the query can be addressed by any available tool.\n
 2. If the query is specific and suitable for a tool, process it using the appropriate tool.\n
 3. If the query is too general or doesn't match any tool, respond directly without using any tools.`;
+
     const toolResponse: AIMessageChunk = await bindedLLM.invoke(prompt);
     if (toolResponse.tool_calls && toolResponse.tool_calls?.length == 1) {
       const toolDataAsString = await getDataFromTools(
@@ -58,11 +59,13 @@ class AgentService {
         llmProvider,
         toolResponse.tool_calls,
       );
+
       const finalLLMResponse = await this.makeFinalLLMCall(
         llm,
         query,
         toolDataAsString,
       );
+
       return {
         llmResponse: finalLLMResponse,
         toolName: toolResponse.tool_calls[0]?.name as string,
@@ -86,14 +89,8 @@ class AgentService {
     llmProvider: LLMProvider,
   ) {
     const tools: Tool[] = await this.getTools(llmProvider, query);
-    const bindedLLM = await llm.bindTools(tools);
-    const response = await this.makeToolCall(
-      bindedLLM,
-      query,
-      llm,
-      llmProvider,
-    );
-    return response;
+    const toolLLM = await llm.bindTools(tools);
+    return await this.makeToolCall(toolLLM, query, llm, llmProvider);
   }
 }
 

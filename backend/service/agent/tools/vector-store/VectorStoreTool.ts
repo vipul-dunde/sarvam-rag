@@ -7,22 +7,7 @@ const prismaDB: PrismaClient = new PrismaClient();
 export const VECTOR_STORE_TOOL = "vectorStoreTool";
 
 class VectorStoreTool {
-  public async initialiseVectorStoreTool(llmProvider: LLMProvider) {
-    const vectorStoreTool = tool(
-      async function ({ descriptionAndTopics }: any): Promise<any> {}.bind(
-        this,
-      ),
-      {
-        name: VECTOR_STORE_TOOL,
-        description:
-          "A tool for retrieving knowledge from a vector store. Use this tool to gather information needed to respond to any user questions.",
-        schema: await this.getVectorStoreSchema(llmProvider),
-      },
-    );
-    return vectorStoreTool;
-  }
-
-  private async getVectorStoreSchema(llmProvider: LLMProvider, query?: string) {
+  private async getVectorStoreSchema(llmProvider: LLMProvider) {
     let topics;
     if (llmProvider === LLMProvider.GoogleAI) {
       topics = await prismaDB.topicsGoogle.findMany();
@@ -43,6 +28,20 @@ class VectorStoreTool {
         output: z.string().describe("Output of the query"),
       })
       .required();
+  }
+
+  public async initialiseVectorStoreTool(llmProvider: LLMProvider) {
+    return tool(
+      async function ({ descriptionAndTopics }: any): Promise<any> {
+        console.log(descriptionAndTopics);
+      }.bind(this),
+      {
+        name: VECTOR_STORE_TOOL,
+        description:
+          "A tool for retrieving knowledge from a vector store. Use this tool to gather information needed to respond to any user questions.",
+        schema: await this.getVectorStoreSchema(llmProvider),
+      },
+    );
   }
 }
 

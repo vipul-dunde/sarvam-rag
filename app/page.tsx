@@ -16,10 +16,6 @@ import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { PutBlobResult } from "@vercel/blob";
 import axios from "axios"; // ShadCN textarea component
 
-interface Message {
-  toolName: keyof typeof toolMapper; // Ensure that toolName is one of the keys
-}
-
 const toolMapper = {
   vectorStoreTool: "VectorStoreTool",
   sarvamLanguageTool: "SarvamLanguageTool",
@@ -28,7 +24,6 @@ const toolMapper = {
 
 export default function ChatPage() {
   const inputFileRef = useRef<HTMLInputElement>(null);
-  const [blob, setBlob] = useState<PutBlobResult | null>(null);
   const [chatInput, setChatInput] = useState<string>("");
   const [messages, setMessages] = useState<
     {
@@ -42,7 +37,6 @@ export default function ChatPage() {
   >([]);
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
-  const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioAvailable, setAudioAvailable] = useState(false);
   const [isToolsEnabled, setIsToolsEnabled] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -83,7 +77,6 @@ export default function ChatPage() {
               { type: "audio/wav" },
             );
             const audioUrl = URL.createObjectURL(audioBlob);
-            setAudioUrl(audioUrl);
             const audio = new Audio(audioUrl);
 
             await new Promise<void>((resolve) => {
@@ -121,7 +114,6 @@ export default function ChatPage() {
       );
       const newBlob = (await response.json()).content as PutBlobResult;
       console.log("Uploaded file:", newBlob.url);
-      setBlob(newBlob);
 
       setMessages((prev) => [
         ...prev,
@@ -340,9 +332,9 @@ export default function ChatPage() {
             <Textarea
               value={chatInput}
               onChange={(e) => setChatInput(e.target.value)}
-              placeholder="Type your message..."
+              placeholder="Enter any general, data-related, translation, or math query here..."
               rows={1}
-              className="flex-grow border border-gray-300 rounded-md pt-4 text-md text-cyan-950 font-mono"
+              className="flex-grow border border-gray-300 rounded-md pt-5 text-sm text-cyan-950 font-sans"
               disabled={loadingChat || loadingUpload}
             />
             <Button

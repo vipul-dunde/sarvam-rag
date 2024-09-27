@@ -15,7 +15,7 @@ I am also proficient in Python, ensuring flexibility for future needs.
 ### Overview
 The Sarvam RAG system is designed to meet all the requirements outlined in the problem statement. You can view the full problem details [here](https://docs.google.com/document/d/1y6Ol_9cLP1VPrHUR7NfXcYtAECZRXAhmmTKM5sc24HQ/edit).
 Key Highlights:
-Application Can distinguish between different Tools Such as VectorStoreTool, SaravamLanguageTool, MathTool, and NormalQuery.
+Application Can distinguish between different Tools Such as VectorStoreTool, SarvamLanguageTool, MathTool, and NormalQuery.
 **SaravamLanguageTool** is additional tool which calls sarvamAI translate api with toolkit Calling.
 
 ### Key Features:
