@@ -1,16 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { Button } from "@/components/ui/button";
-import { redirect } from "next/navigation"; // VSCode theme
 
 const apiEndpoints = [
   {
@@ -18,7 +12,7 @@ const apiEndpoints = [
     method: "GET",
     endpoint: "/api/v1/vectorstore/get-documents",
     description: "Get Similar Documents from Qdrant Vector Store",
-    curl: "curl --location \\\n 'https://sarvam-rag.vercel.app/api/v1/vectorstore/get-documents\\\n?query=%22Vipul%20Dunde%20is%20Software%20Engineer%202%22'",
+    curl: "curl --location \\\n 'https://sarvam-rag.vercel.app/api/v1/vectorstore/get-documents\\\n?query=%22Vipul%20Dunde%20is%20Software%20Engineer%202%22&llmOption=OpenAI'",
     response: {
       status: 200,
       content: [
@@ -77,7 +71,7 @@ const apiEndpoints = [
     method: "POST",
     endpoint: "/api/v1/vectorstore/create",
     description: "Create Document in Qdrant Vector Store",
-    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/vectorstore/create?filename=ncert_physics_chapter_11.pdf' \\
+    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/vectorstore/create?filename=ncert_physics_chapter_11.pdf&llmOption=OpenAI' \\
 --form 'file.pdf=@"/Users/vipul.dunde/Desktop/Personal/sarvam-rag/dataset/iesc111.pdf"'`,
     response: {
       status: 200,
@@ -97,7 +91,7 @@ const apiEndpoints = [
     method: "DELETE",
     endpoint: "/api/v1/vectorstore/delete",
     description: "Deletes all documents from Qdrant Vector Store",
-    curl: "curl --location --request DELETE 'https://sarvam-rag.vercel.app/api/v1/vectorstore/delete'",
+    curl: "curl --location --request DELETE 'https://sarvam-rag.vercel.app/api/v1/vectorstore/delete?llmOption=OpenAI'",
     response: {
       status: 200,
       content: "Cleared Vector Store",
@@ -105,7 +99,7 @@ const apiEndpoints = [
     },
   },
   {
-    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/agent' \\ --header 'Content-Type: application/json' \\ --data '{"query" : "Please help me with activity 11.3..."}`,
+    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/agent?llmOption=OpenAI' \\ --header 'Content-Type: application/json' \\ --data '{"query" : "Please help me with activity 11.3..."}`,
     description: "Get Response from Agent",
     endpoint: "/api/v1/agent",
     method: "POST",
@@ -122,7 +116,7 @@ const apiEndpoints = [
     },
   },
   {
-    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/sarvam/text-to-speech' \\
+    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/sarvam/text-to-speech?llmOption=OpenAI' \\
 --header 'Content-Type: application/json' \\
 --data '{
     "message" : "I am Vipul Dunde"
@@ -142,7 +136,7 @@ const apiEndpoints = [
     },
   },
   {
-    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/chat' \\
+    curl: `curl --location 'https://sarvam-rag.vercel.app/api/v1/chat?llmOption=OpenAI' \\
 --header 'Content-Type: application/json' \\
 --data '{
     "query" : "Hey AI.. :)"
@@ -160,26 +154,8 @@ const apiEndpoints = [
   },
 ];
 
-// Helper function to generate formatted cURL command with line breaks
 const generateCurlCommand = (method: string, endpoint: string) => {
   return `curl -X ${method} \\\n  https://your-domain.com${endpoint} \\\n  -H "Content-Type: application/json"`;
-};
-
-// Helper function to make API requests
-const tryApiRequest = async (
-  method: string,
-  endpoint: string,
-  setResponse: (response: string) => void,
-) => {
-  const url = `https://your-domain.com${endpoint}`;
-
-  try {
-    const response = await fetch(url, { method });
-    const data = await response.json();
-    setResponse(JSON.stringify(data, null, 2));
-  } catch (error) {
-    setResponse(`Error: ${(error as Error).message}`);
-  }
 };
 
 const ApiTable = () => {
@@ -199,16 +175,26 @@ const ApiTable = () => {
       </div>
       <div className="text-3xl font-bold mb-6 text-black">
         <Button
-          className="font-bold bg-amber-500"
+          className="font-bold bg-amber-500 mr-2"
           onClick={() => {
             window.location.href =
-              "https://qujex87zvnsgqg1k.public.blob.vercel-storage.com/Sarvam%20Vipul%20Dunde.postman_collection-no9x6PanTkP8W7vHjdWeDe2J1wEBzL.json?download=1";
+              "https://qujex87zvnsgqg1k.public.blob.vercel-storage.com/SarvamRagGoogleAI-Bwtd9zmxOlw6VbmNgeQNkaisGCUDvi.json?download=1";
           }}
         >
-          Download Postman Collection
+          Google LLM Postman Collection
+        </Button>
+        <Button
+          className="font-bold bg-amber-500 ml-2"
+          onClick={() => {
+            window.location.href =
+              "https://qujex87zvnsgqg1k.public.blob.vercel-storage.com/SarvamRagOpenAI-q6Ygcm4A0uBa70MxD6BSEB4CbpFS8Z.json?download=1";
+          }}
+        >
+          OpenAI LLM Postman Collection
         </Button>
       </div>
-      <div className="w-full max-w-3xl space-y-6">
+      <div className="text-3xl font-bold mb-6 text-black"></div>
+      <div className="w-full max-w-6xl space-y-6">
         {apiEndpoints.map((api) => (
           <Card key={api.name} className="bg-white shadow-md text-black">
             <CardHeader className="border-b">
