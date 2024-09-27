@@ -6,9 +6,13 @@ import { getDataFromTools } from "@/backend/service/support/ToolMapper";
 import MathematicsTool from "@/backend/service/tools/MathematicsTool";
 import { ChatOpenAI } from "@langchain/openai";
 import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+import SarvamLanguageTool from "@/backend/service/tools/SarvamLanguageTool";
 
 class AgentService {
-  private async getTools(llmProvider: LLMProvider): Promise<Tool[]> {
+  private async getTools(
+    llmProvider: LLMProvider,
+    query?: string,
+  ): Promise<Tool[]> {
     let tools: Tool[] = [];
     const vectorStoreTool: VectorStoreTool = new VectorStoreTool();
     tools.push(
@@ -16,6 +20,13 @@ class AgentService {
     );
     const mathematicsTool: MathematicsTool = new MathematicsTool();
     tools.push((await mathematicsTool.initialiseMathTool()) as any);
+    const sarvamLanguageTool: SarvamLanguageTool = new SarvamLanguageTool();
+    tools.push(
+      (await sarvamLanguageTool.initialiseSarvamLanguageTool(
+        llmProvider,
+        query,
+      )) as any,
+    );
     return tools;
   }
 
@@ -35,7 +46,6 @@ class AgentService {
     llm: ChatGoogleGenerativeAI | ChatOpenAI,
     llmProvider: LLMProvider,
   ) {
-    console.log("llm: ", llm.constructor.name);
     let prompt = `The user has submitted the following query: "${query}".\n
 1. First, review the tool descriptions to determine if the query can be addressed by any available tool.\n
 2. If the query is specific and suitable for a tool, process it using the appropriate tool.\n
@@ -75,7 +85,7 @@ class AgentService {
     llm: ChatGoogleGenerativeAI | ChatOpenAI,
     llmProvider: LLMProvider,
   ) {
-    const tools: Tool[] = await this.getTools(llmProvider);
+    const tools: Tool[] = await this.getTools(llmProvider, query);
     const bindedLLM = await llm.bindTools(tools);
     const response = await this.makeToolCall(
       bindedLLM,

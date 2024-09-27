@@ -87,7 +87,7 @@ const apiEndpoints = [
     },
   },
   {
-    name: "Delete All Documents from Qdrant Vector Store",
+    name: "Delete all points from qdrant vector store collection",
     method: "DELETE",
     endpoint: "/api/v1/vectorstore/delete",
     description: "Deletes all documents from Qdrant Vector Store",

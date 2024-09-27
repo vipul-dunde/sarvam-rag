@@ -1,16 +1,17 @@
 import { VECTOR_STORE_TOOL } from "@/backend/service/tools/VectorStoreTool";
-import { WEB_QUERY_TOOL } from "@/backend/service/tools/WebQueryTool";
 import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
-import mathematicsTool, {
-  MATHEMATICS_TOOL,
-} from "@/backend/service/tools/MathematicsTool";
+import { MATHEMATICS_TOOL } from "@/backend/service/tools/MathematicsTool";
 import MathematicsTool from "@/backend/service/tools/MathematicsTool";
 import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+import sarvamLanguageTool, {
+  SARVAM_LANGUAGE_TOOL,
+} from "@/backend/service/tools/SarvamLanguageTool";
+import SarvamLanguageTool from "@/backend/service/tools/SarvamLanguageTool";
 
 export enum ToolProvider {
   VectorStoreTool = VECTOR_STORE_TOOL as any,
-  WebQueryTool = WEB_QUERY_TOOL as any,
   MathematicsTool = MATHEMATICS_TOOL as any,
+  SarvamLanguageTool = SARVAM_LANGUAGE_TOOL as any,
 }
 
 export async function getDataFromTools(
@@ -32,8 +33,13 @@ export async function getDataFromTools(
         toolCall[0].args.operands,
       );
     }
-    case ToolProvider.WebQueryTool as unknown as string:
-      return ToolProvider.WebQueryTool;
+    case ToolProvider.SarvamLanguageTool as unknown as string:
+      const sarvamLanguageTool: SarvamLanguageTool = new SarvamLanguageTool();
+      return await sarvamLanguageTool.performOperation(
+        llmProvider,
+        query,
+        toolCall[0].args.operation,
+      );
     default:
       return ToolProvider.VectorStoreTool; // Or throw an error, or handle the unknown case as needed
   }

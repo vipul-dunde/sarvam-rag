@@ -22,7 +22,7 @@ interface Message {
 
 const toolMapper = {
   vectorStoreTool: "VectorStoreTool",
-  webQueryTool: "WebQueryTool",
+  sarvamLanguageTool: "SarvamLanguageTool",
   mathematicsTool: "MathematicsTool",
 };
 
@@ -284,7 +284,7 @@ export default function ChatPage() {
                       </div>
 
                       <SyntaxHighlighter
-                        language="markdown"
+                        language="bash"
                         style={vscDarkPlus}
                         customStyle={{
                           backgroundColor: "black",

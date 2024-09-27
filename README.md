@@ -14,6 +14,9 @@ I am also proficient in Python, ensuring flexibility for future needs.
 
 ### Overview
 The Sarvam RAG system is designed to meet all the requirements outlined in the problem statement. You can view the full problem details [here](https://docs.google.com/document/d/1y6Ol_9cLP1VPrHUR7NfXcYtAECZRXAhmmTKM5sc24HQ/edit).
+Key Highlights:
+Application Can distinguish between different Tools Such as VectorStoreTool, SaravamLanguageTool, MathTool, and NormalQuery.
+**SaravamLanguageTool** is additional tool which calls sarvamAI translate api with toolkit Calling.
 
 ### Key Features:
    1. **Retrieval-Augmented Generation (RAG)**: Implemented using Qdrant Vector Store and Google Generative AI API.
@@ -33,7 +36,7 @@ The Sarvam RAG system is designed to meet all the requirements outlined in the p
 ### Features:
 - **Chat Interface**: Communicate with the model using or without tool assistance, upload files, and manage vector store data.
 - **Audio Output**: Conversations are enhanced with audio playback, powered by Sarvam's text-to-speech API.
-- **Advanced Agent**: Built with Vector Store and Math Tools, with plans to incorporate a web search tool.
+- **Advanced Agent**: Built with **SarvamLanguageTool**, Vector Store and Math Tools, with plans to incorporate a web search tool.
 
 ---
 
