@@ -17,7 +17,7 @@ class GoogleAIAdapter {
     });
   }
 
-  public async getInitialisedVectorStoreAndLLM(): Promise<ChatGoogleGenerativeAI> {
+  public async getInitialisedLLM(): Promise<ChatGoogleGenerativeAI> {
     return new ChatGoogleGenerativeAI({
       apiKey: process.env.GOOGLE_API_KEY,
       streamUsage: false,

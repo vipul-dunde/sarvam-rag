@@ -4,22 +4,35 @@ import { QdrantVectorStore } from "@langchain/qdrant";
 import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
 import { QdrantClient } from "@qdrant/qdrant-js";
 import { PrismaClient } from "@prisma/client";
+import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
 
 class QdrantLCVectorStore {
-  public async getSimilarDocs(query: string, count: number = 3) {
-    const vectorStore = await this.getQdrantVectorStore(LLMProvider.GoogleAI);
+  public async getSimilarDocs(
+    llmProvider: LLMProvider,
+    query: string,
+    count: number = 3,
+  ) {
+    const vectorStore = await this.getQdrantVectorStore(llmProvider);
     return await vectorStore.similaritySearch(query, count);
   }
 
   public async getSimilarDocsAsString(
+    llmProvider: LLMProvider,
     query: string,
-    count: number = 3,
+    count: number = 2,
     threshold: number = 0.5,
   ) {
     const vectorStore = await this.getQdrantVectorStore(LLMProvider.GoogleAI);
     const similarDocs = await vectorStore.similaritySearchWithScore(query);
+    const splitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 4000,
+      chunkOverlap: 600,
+    });
+
     return JSON.stringify(
-      similarDocs.filter((doc) => doc[1] >= threshold).map((doc) => doc[0]),
+      await splitter.splitDocuments(
+        similarDocs.filter((doc) => doc[1] >= threshold).map((doc) => doc[0]),
+      ),
     );
   }
 
@@ -27,9 +40,14 @@ class QdrantLCVectorStore {
     try {
       const embeddings =
         await langChainHelperService.getEmbeddingsFromProvider(llmProvider);
+      const collectionName = (
+        llmProvider === LLMProvider.GoogleAI
+          ? process.env.QDRANT_GOOGLE_COLLECTION_NAME
+          : process.env.QDRANT_OPENAI_COLLECTION_NAME
+      ) as string;
       return QdrantVectorStore.fromExistingCollection(embeddings, {
         url: process.env.QDRANT_URL as string,
-        collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
+        collectionName: collectionName,
         apiKey: process.env.QDRANT_API_KEY as string,
       });
     } catch (error) {
@@ -48,11 +66,21 @@ class QdrantLCVectorStore {
   ) {
     const embeddings =
       await langChainHelperService.getEmbeddingsFromProvider(llmProvider);
+    const collectionName = (
+      llmProvider === LLMProvider.GoogleAI
+        ? process.env.QDRANT_GOOGLE_COLLECTION_NAME
+        : process.env.QDRANT_OPENAI_COLLECTION_NAME
+    ) as string;
     const vectorStore: QdrantVectorStore = new QdrantVectorStore(embeddings, {
       url: process.env.QDRANT_URL as string,
-      collectionName: process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
+      collectionName: collectionName,
       apiKey: process.env.QDRANT_API_KEY as string,
     });
+    const documentSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 4000,
+      chunkOverlap: 600,
+    });
+    documents = await documentSplitter.splitDocuments(documents);
     await vectorStore.addDocuments(documents, { customPayload: [] });
     return vectorStore;
   }
@@ -63,17 +91,18 @@ class QdrantLCVectorStore {
         url: process.env.QDRANT_URL,
         apiKey: process.env.QDRANT_API_KEY,
       });
-      await client.deleteCollection(
-        process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
-      );
+      const collectionName = (
+        llmProvider === LLMProvider.GoogleAI
+          ? process.env.QDRANT_GOOGLE_COLLECTION_NAME
+          : process.env.QDRANT_OPENAI_COLLECTION_NAME
+      ) as string;
+      console.log(`Clearing Qdrant Vector Store: ${collectionName}`);
+      await client.deleteCollection(collectionName);
       const prismaDB = new PrismaClient();
       await prismaDB.topics.deleteMany();
-      await client.createCollection(
-        process.env.QDRANT_GOOGLE_COLLECTION_NAME as string,
-        {
-          vectors: { size: 768, distance: "Cosine" },
-        },
-      );
+      await client.createCollection(collectionName, {
+        vectors: { size: 768, distance: "Cosine" },
+      });
     } catch (error) {
       console.error(
         `Error clearing Qdrant Vector Store: ${(error as Error).message}`,

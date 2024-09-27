@@ -1,4 +1,4 @@
-import { OpenAI, OpenAIEmbeddings } from "@langchain/openai";
+import { ChatOpenAI, OpenAIEmbeddings } from "@langchain/openai";
 
 class OpenAIAdapter {
   public async getOpenAiEmbeddings() {
@@ -8,8 +8,8 @@ class OpenAIAdapter {
     });
   }
 
-  public async getInitialisedVectorStoreAndLLM(): Promise<OpenAI> {
-    return new OpenAI({
+  public async getInitialisedLLM() {
+    return new ChatOpenAI({
       model: "gpt-4o",
       temperature: 0.7,
     });

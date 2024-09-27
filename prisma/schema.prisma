@@ -14,3 +14,15 @@ model Topics {
   fileName    String @db.Text
   Description String @db.Text
 }
+
+model TopicsGoogle {
+  id          Int    @id @default(autoincrement())
+  fileName    String @db.Text
+  Description String @db.Text
+}
+
+model TopicsOpenAI {
+  id          Int    @id @default(autoincrement())
+  fileName    String @db.Text
+  Description String @db.Text
+}

@@ -1,9 +1,18 @@
 import sarvamService from "@/backend/service/sarvam-ai/SarvamService";
 import { NextResponse } from "next/server";
+import {
+  LLMProvider,
+  mapToLLMProvider,
+} from "@/backend/service/support/LLMProviderMapper";
 
 async function postHandler(request: Request) {
   try {
     const body = await request.json();
+    const { searchParams } = new URL(request.url);
+    const llmProvider: LLMProvider = (await mapToLLMProvider(
+      (searchParams.get("llmOption") as string) || "GoogleAI",
+    )) as LLMProvider;
+
     const sarvamSpeech: string[] = await sarvamService.getSpeechFromText(
       body.message as string,
     );

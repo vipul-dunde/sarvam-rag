@@ -1,10 +1,17 @@
 import { NextResponse } from "next/server";
 import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
-import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+import {
+  LLMProvider,
+  mapToLLMProvider,
+} from "@/backend/service/support/LLMProviderMapper";
 
-async function deleteHandler() {
+async function deleteHandler(request: Request) {
   try {
-    await qdrantLCVectorStore.clearQdrantVectorStore(LLMProvider.GoogleAI);
+    const { searchParams } = new URL(request.url);
+    const llmProvider: LLMProvider = (await mapToLLMProvider(
+      (searchParams.get("llmOption") as string) || "GoogleAI",
+    )) as LLMProvider;
+    await qdrantLCVectorStore.clearQdrantVectorStore(llmProvider);
     const nextResponse = {
       status: 200,
       content: "Cleared Vector Store",

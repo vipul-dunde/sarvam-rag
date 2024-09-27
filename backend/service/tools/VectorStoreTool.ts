@@ -1,12 +1,13 @@
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
-import { Tool } from "langchain/tools";
 import { PrismaClient } from "@prisma/client";
+import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+
 const prismaDB: PrismaClient = new PrismaClient();
 export const VECTOR_STORE_TOOL = "vectorStoreTool";
 
 class VectorStoreTool {
-  public async initialiseVectorStoreTool(llm: any) {
+  public async initialiseVectorStoreTool(llmProvider: LLMProvider) {
     const vectorStoreTool = tool(
       async function ({ descriptionAndTopics }: any): Promise<any> {}.bind(
         this,
@@ -15,14 +16,19 @@ class VectorStoreTool {
         name: VECTOR_STORE_TOOL,
         description:
           "A tool for retrieving knowledge from a vector store. Use this tool to gather information needed to respond to any user questions.",
-        schema: await this.getVectorStoreSchema(),
+        schema: await this.getVectorStoreSchema(llmProvider),
       },
     );
     return vectorStoreTool;
   }
 
-  private async getVectorStoreSchema(query?: string) {
-    const topics = await prismaDB.topics.findMany();
+  private async getVectorStoreSchema(llmProvider: LLMProvider, query?: string) {
+    let topics;
+    if (llmProvider === LLMProvider.GoogleAI) {
+      topics = await prismaDB.topicsGoogle.findMany();
+    } else {
+      topics = await prismaDB.topicsOpenAI.findMany();
+    }
     const documents = topics.map(
       (topic, index) =>
         `${index + 1} - ${topic.fileName} -> ${topic.Description}\n`,
@@ -38,8 +44,6 @@ class VectorStoreTool {
       })
       .required();
   }
-
-  public async processWithVectorStore(query: string) {}
 }
 
 export default VectorStoreTool;

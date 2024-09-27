@@ -1,14 +1,25 @@
 import { NextResponse } from "next/server";
-import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
-import googleAIAdapter from "@/backend/service/llm/googleai/GoogleAIAdapter";
 import agentService from "@/backend/service/agent/AgentService";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
+import {
+  LLMProvider,
+  mapToLLMProvider,
+} from "@/backend/service/support/LLMProviderMapper";
+import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
+import { ChatOpenAI } from "@langchain/openai";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const llm: ChatGoogleGenerativeAI =
-      await googleAIAdapter.getInitialisedVectorStoreAndLLM();
+    const { searchParams } = new URL(request.url);
+    const llmProvider: LLMProvider = (await mapToLLMProvider(
+      (searchParams.get("llmOption") as string) || "GoogleAI",
+    )) as LLMProvider;
+
+    const llm: ChatGoogleGenerativeAI | ChatOpenAI =
+      await langChainHelperService.getInitialisedLLMFromProviderWithLangChain(
+        llmProvider,
+      );
 
     if (!llm.bindTools) {
       throw new Error("This model does not support tools.");
@@ -17,6 +28,7 @@ export async function POST(request: Request) {
     const response = await agentService.initialiseAgent(
       body.query as string,
       llm,
+      llmProvider,
     );
 
     const nextResponse = {

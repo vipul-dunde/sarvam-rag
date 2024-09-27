@@ -5,6 +5,7 @@ import mathematicsTool, {
   MATHEMATICS_TOOL,
 } from "@/backend/service/tools/MathematicsTool";
 import MathematicsTool from "@/backend/service/tools/MathematicsTool";
+import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
 
 export enum ToolProvider {
   VectorStoreTool = VECTOR_STORE_TOOL as any,
@@ -15,11 +16,15 @@ export enum ToolProvider {
 export async function getDataFromTools(
   query: string | any,
   input: string,
+  llmProvider: LLMProvider,
   toolCall?: any,
 ) {
   switch (input.trim()) {
     case ToolProvider.VectorStoreTool as unknown as string:
-      return await qdrantLCVectorStore.getSimilarDocsAsString(query);
+      return await qdrantLCVectorStore.getSimilarDocsAsString(
+        llmProvider,
+        query,
+      );
     case ToolProvider.MathematicsTool as unknown as string: {
       const mathTool = new MathematicsTool();
       return mathTool.performOperation(

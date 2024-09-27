@@ -1,16 +1,23 @@
 import { NextResponse } from "next/server";
 import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
-import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
-import { DocumentInterface } from "@langchain/core/documents";
+import {
+  LLMProvider,
+  mapToLLMProvider,
+} from "@/backend/service/support/LLMProviderMapper";
 
 async function getHandler(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const query: string = searchParams.get("query") as string;
-    const vectorStore = await qdrantLCVectorStore.getQdrantVectorStore(
-      LLMProvider.GoogleAI,
+    const llmProvider: LLMProvider = (await mapToLLMProvider(
+      (searchParams.get("llmOption") as string) || "GoogleAI",
+    )) as LLMProvider;
+
+    const documents = await qdrantLCVectorStore.getSimilarDocs(
+      llmProvider,
+      query,
+      3,
     );
-    const documents = await qdrantLCVectorStore.getSimilarDocs(query, 3);
     const nextResponse = {
       status: 200,
       content: documents,

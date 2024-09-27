@@ -1,5 +1,6 @@
+### **Need-to-Know Guide**
 
-## Sarvam RAG
+## Sarvam RAG 
 
 **I opted for Next.js over FastAPI due to time constraints, primarily because:**
    1. It simplifies integration with the UI, API development, and deployment.
@@ -46,6 +47,12 @@ The Sarvam RAG system is designed to meet all the requirements outlined in the p
 
 ## Getting Started
 
+
+1. **Project runs best with OpenAI GPT-4**, as the Google Free Tier may face limitations and sometimes returns Internal Server Errors.
+2. **Two LLM options are available: `["OpenAI", "GoogleAI"]`**, with `"GoogleAI"` as the default. You can switch between them using the `llmOption` query parameter.
+
+
+
 Follow these steps to run the application locally:
 
 1. **Configure Environment Variables**  
@@ -59,6 +66,7 @@ Follow these steps to run the application locally:
     BLOB_READ_WRITE_TOKEN="your-vercel-blob-token"
     DATABASE_URL="your-database-url"
     SARVAM_SUBSCRIPTION_KEY="your-sarvam-subscription-key"
+    OPENAI_API_KEY="<your-gpt4-key>"
     ```
 
 2. **Install Dependencies and Start the Server**  

@@ -3,16 +3,16 @@ import googleAIAdapter from "@/backend/service/llm/googleai/GoogleAIAdapter";
 import openAIAdapter from "@/backend/service/llm/openai/OpenAIAdapter";
 
 class LangChainHelperService {
-  public async getInitialisedVectorAndLLMFromProviderWithLangChain(
+  public async getInitialisedLLMFromProviderWithLangChain(
     provider: LLMProvider,
   ) {
     switch (provider) {
       case LLMProvider.GoogleAI:
-        return await googleAIAdapter.getInitialisedVectorStoreAndLLM();
+        return await googleAIAdapter.getInitialisedLLM();
       case LLMProvider.OpenAI:
-        return await openAIAdapter.getInitialisedVectorStoreAndLLM();
+        return await openAIAdapter.getInitialisedLLM();
       default:
-        return await googleAIAdapter.getInitialisedVectorStoreAndLLM();
+        return await googleAIAdapter.getInitialisedLLM();
     }
   }
 

@@ -4,19 +4,23 @@ import VectorStoreTool from "@/backend/service/tools/VectorStoreTool";
 import { AIMessageChunk } from "@langchain/core/messages";
 import { getDataFromTools } from "@/backend/service/support/ToolMapper";
 import MathematicsTool from "@/backend/service/tools/MathematicsTool";
+import { ChatOpenAI } from "@langchain/openai";
+import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
 
 class AgentService {
-  private async getTools(llm: ChatGoogleGenerativeAI): Promise<Tool[]> {
+  private async getTools(llmProvider: LLMProvider): Promise<Tool[]> {
     let tools: Tool[] = [];
     const vectorStoreTool: VectorStoreTool = new VectorStoreTool();
-    tools.push((await vectorStoreTool.initialiseVectorStoreTool(llm)) as any);
+    tools.push(
+      (await vectorStoreTool.initialiseVectorStoreTool(llmProvider)) as any,
+    );
     const mathematicsTool: MathematicsTool = new MathematicsTool();
     tools.push((await mathematicsTool.initialiseMathTool()) as any);
     return tools;
   }
 
   private async makeFinalLLMCall(
-    llm: ChatGoogleGenerativeAI,
+    llm: ChatGoogleGenerativeAI | ChatOpenAI,
     query: string,
     toolData: any,
   ) {
@@ -28,18 +32,20 @@ class AgentService {
   private async makeToolCall(
     bindedLLM: any,
     query: string,
-    llm: ChatGoogleGenerativeAI,
+    llm: ChatGoogleGenerativeAI | ChatOpenAI,
+    llmProvider: LLMProvider,
   ) {
+    console.log("llm: ", llm.constructor.name);
     let prompt = `The user has submitted the following query: "${query}".\n
 1. First, review the tool descriptions to determine if the query can be addressed by any available tool.\n
 2. If the query is specific and suitable for a tool, process it using the appropriate tool.\n
 3. If the query is too general or doesn't match any tool, respond directly without using any tools.`;
     const toolResponse: AIMessageChunk = await bindedLLM.invoke(prompt);
-
     if (toolResponse.tool_calls && toolResponse.tool_calls?.length == 1) {
       const toolDataAsString = await getDataFromTools(
         query,
         toolResponse.tool_calls[0]?.name as string,
+        llmProvider,
         toolResponse.tool_calls,
       );
       const finalLLMResponse = await this.makeFinalLLMCall(
@@ -64,10 +70,19 @@ class AgentService {
     };
   }
 
-  public async initialiseAgent(query: string, llm: ChatGoogleGenerativeAI) {
-    const tools: Tool[] = await this.getTools(llm);
+  public async initialiseAgent(
+    query: string,
+    llm: ChatGoogleGenerativeAI | ChatOpenAI,
+    llmProvider: LLMProvider,
+  ) {
+    const tools: Tool[] = await this.getTools(llmProvider);
     const bindedLLM = await llm.bindTools(tools);
-    const response = await this.makeToolCall(bindedLLM, query, llm);
+    const response = await this.makeToolCall(
+      bindedLLM,
+      query,
+      llm,
+      llmProvider,
+    );
     return response;
   }
 }
