@@ -10,10 +10,7 @@ async function getHandler(request: Request) {
     const vectorStore = await qdrantLCVectorStore.getQdrantVectorStore(
       LLMProvider.GoogleAI,
     );
-    const documents: DocumentInterface[] = await vectorStore.similaritySearch(
-      query,
-      5,
-    );
+    const documents = await qdrantLCVectorStore.getSimilarDocs(query, 3);
     const nextResponse = {
       status: 200,
       content: documents,

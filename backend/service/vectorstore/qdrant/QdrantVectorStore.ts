@@ -6,16 +6,21 @@ import { QdrantClient } from "@qdrant/qdrant-js";
 import { PrismaClient } from "@prisma/client";
 
 class QdrantLCVectorStore {
-  public async getSimilarDocs(query: string) {
-    const vectorStore = await qdrantLCVectorStore.getQdrantVectorStore(
-      LLMProvider.GoogleAI,
-    );
-    return await vectorStore.similaritySearch(query, 3);
+  public async getSimilarDocs(query: string, count: number = 3) {
+    const vectorStore = await this.getQdrantVectorStore(LLMProvider.GoogleAI);
+    return await vectorStore.similaritySearch(query, count);
   }
 
-  public async getSimilarDocsAsString(query: string) {
-    const similarDocs = await this.getSimilarDocs(query);
-    return similarDocs.map((doc) => doc.pageContent).toString();
+  public async getSimilarDocsAsString(
+    query: string,
+    count: number = 3,
+    threshold: number = 0.5,
+  ) {
+    const vectorStore = await this.getQdrantVectorStore(LLMProvider.GoogleAI);
+    const similarDocs = await vectorStore.similaritySearchWithScore(query);
+    return JSON.stringify(
+      similarDocs.filter((doc) => doc[1] >= threshold).map((doc) => doc[0]),
+    );
   }
 
   public async getQdrantVectorStore(llmProvider: LLMProvider) {
