@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import agentService from "@/backend/services/agent/AgentService";
+import llmAgentService from "@/backend/services/llm-agent/LLMAgentService";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import {
   LLMProvider,
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
       throw new Error("This model does not support tools.");
     }
 
-    const response = await agentService.initialiseAgent(
+    const response = await llmAgentService.initialiseAgent(
       body.query as string,
       llm,
       llmProvider,

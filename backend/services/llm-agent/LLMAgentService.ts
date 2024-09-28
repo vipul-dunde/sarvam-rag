@@ -8,7 +8,7 @@ import { ChatOpenAI } from "@langchain/openai";
 import { LLMProvider } from "@/backend/support/LLMProviderMapper";
 import SarvamLanguageTool from "@/backend/tools/sarvam-tool/SarvamLanguageTool";
 
-class AgentService {
+class LLMAgentService {
   private async getTools(
     llmProvider: LLMProvider,
     query?: string,
@@ -94,5 +94,5 @@ class AgentService {
   }
 }
 
-const agentService = new AgentService();
-export default agentService;
+const llmAgentService: LLMAgentService = new LLMAgentService();
+export default llmAgentService;
