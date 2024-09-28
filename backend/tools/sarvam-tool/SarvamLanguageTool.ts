@@ -13,13 +13,14 @@ class SarvamLanguageTool {
         operation: z
           .string()
           .describe(
-            "This is the operation that the tool will perform when user asks to translate a sentence to another language. Prepare only POST payload/body with reference of " +
+            "This operation strictly handles translation requests. When the user asks to translate a sentence to another language, prepare only the POST payload/body based on the reference schema: " +
               JSON.stringify(
                 translateOpenAPISpec.paths["/translate"].post.requestBody
                   .content["application/json"].example,
               ) +
-              " for Query of User: " +
-              query,
+              " for the user's query: " +
+              query +
+              ". Only process valid translation queries—ignore any other types of requests.",
           ),
       })
       .required();
