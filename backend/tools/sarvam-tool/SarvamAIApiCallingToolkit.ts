@@ -1,9 +1,9 @@
-import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
-import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+import langChainHelperService from "@/backend/services/langchain/LangChainHelperService";
+import { LLMProvider } from "@/backend/support/LLMProviderMapper";
 import { OpenApiToolkit } from "langchain/agents/toolkits";
 import { JsonSpec } from "langchain/tools";
 import { createReactAgent } from "@langchain/langgraph/prebuilt";
-import { translateOpenAPISpec } from "@/backend/service/agent/tools/support/openapi-specs/OpenAPISpecifications";
+import { translateOpenAPISpec } from "@/backend/tools/support/openapi-specs/OpenAPISpecifications";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
 import { StructuredToolInterface } from "@langchain/core/tools";

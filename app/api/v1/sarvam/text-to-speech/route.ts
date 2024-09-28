@@ -1,9 +1,9 @@
-import sarvamService from "@/backend/service/sarvam-ai/SarvamService";
+import sarvamService from "@/backend/services/sarvam-ai/SarvamService";
 import { NextResponse } from "next/server";
 import {
   LLMProvider,
   mapToLLMProvider,
-} from "@/backend/service/support/LLMProviderMapper";
+} from "@/backend/support/LLMProviderMapper";
 
 async function postHandler(request: Request) {
   try {

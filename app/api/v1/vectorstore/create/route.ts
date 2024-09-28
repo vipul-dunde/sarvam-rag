@@ -1,17 +1,15 @@
 import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
-import langChainDocumentService from "@/backend/service/langchain/LangChainDocumentService";
-import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
+import langChainDocumentService from "@/backend/services/langchain/LangChainDocumentService";
+import { qdrantLCVectorStore } from "@/backend/vector-store/qdrant/QdrantVectorStore";
 import {
   LLMProvider,
   mapToLLMProvider,
-} from "@/backend/service/support/LLMProviderMapper";
-import googleAIAdapter from "@/backend/service/llm/googleai/GoogleAIAdapter";
-import { PrismaClient } from "@prisma/client";
+} from "@/backend/support/LLMProviderMapper";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import { ChatOpenAI } from "@langchain/openai";
-import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
-const prismaDB = new PrismaClient();
+import langChainHelperService from "@/backend/services/langchain/LangChainHelperService";
+import { prismaDB } from "@/backend/support/PrismaClient";
 
 async function postHandler(request: Request) {
   try {

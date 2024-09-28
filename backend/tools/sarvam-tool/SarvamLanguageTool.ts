@@ -1,8 +1,8 @@
 import { z } from "zod";
 import { tool } from "@langchain/core/tools";
-import { translateOpenAPISpec } from "@/backend/service/agent/tools/support/openapi-specs/OpenAPISpecifications";
-import sarvamAIApiCallingToolkit from "@/backend/service/agent/tools/sarvam-tool/SarvamAIApiCallingToolkit";
-import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+import { translateOpenAPISpec } from "@/backend/tools/support/openapi-specs/OpenAPISpecifications";
+import sarvamAIApiCallingToolkit from "@/backend/tools/sarvam-tool/SarvamAIApiCallingToolkit";
+import { LLMProvider } from "@/backend/support/LLMProviderMapper";
 
 export const SARVAM_LANGUAGE_TOOL = "sarvamLanguageTool";
 

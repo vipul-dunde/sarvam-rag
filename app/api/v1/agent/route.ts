@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import agentService from "@/backend/service/agent/AgentService";
+import agentService from "@/backend/services/agent/AgentService";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
 import {
   LLMProvider,
   mapToLLMProvider,
-} from "@/backend/service/support/LLMProviderMapper";
-import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
+} from "@/backend/support/LLMProviderMapper";
+import langChainHelperService from "@/backend/services/langchain/LangChainHelperService";
 import { ChatOpenAI } from "@langchain/openai";
 
 export async function POST(request: Request) {

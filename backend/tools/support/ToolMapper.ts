@@ -1,10 +1,12 @@
-import { VECTOR_STORE_TOOL } from "@/backend/service/agent/tools/vector-store/VectorStoreTool";
-import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
-import { MATHEMATICS_TOOL } from "@/backend/service/agent/tools/math-tool/MathematicsTool";
-import MathematicsTool from "@/backend/service/agent/tools/math-tool/MathematicsTool";
-import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
-import { SARVAM_LANGUAGE_TOOL } from "@/backend/service/agent/tools/sarvam-tool/SarvamLanguageTool";
-import SarvamLanguageTool from "@/backend/service/agent/tools/sarvam-tool/SarvamLanguageTool";
+import { VECTOR_STORE_TOOL } from "@/backend/tools/vector-store/VectorStoreTool";
+import MathematicsTool, {
+  MATHEMATICS_TOOL,
+} from "@/backend/tools/math-tool/MathematicsTool";
+import SarvamLanguageTool, {
+  SARVAM_LANGUAGE_TOOL,
+} from "@/backend/tools/sarvam-tool/SarvamLanguageTool";
+import { LLMProvider } from "@/backend/support/LLMProviderMapper";
+import { qdrantLCVectorStore } from "@/backend/vector-store/qdrant/QdrantVectorStore";
 
 export enum ToolProvider {
   VectorStoreTool = VECTOR_STORE_TOOL as any,
@@ -39,6 +41,6 @@ export async function getDataFromTools(
         toolCall[0].args.operation,
       );
     default:
-      return ToolProvider.VectorStoreTool; // Or throw an error, or handle the unknown case as needed
+      return ToolProvider.VectorStoreTool;
   }
 }

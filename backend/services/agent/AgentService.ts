@@ -1,12 +1,12 @@
 import { Tool } from "langchain/tools";
 import { ChatGoogleGenerativeAI } from "@langchain/google-genai";
-import VectorStoreTool from "@/backend/service/agent/tools/vector-store/VectorStoreTool";
+import VectorStoreTool from "@/backend/tools/vector-store/VectorStoreTool";
 import { AIMessageChunk } from "@langchain/core/messages";
-import { getDataFromTools } from "@/backend/service/agent/tools/support/ToolMapper";
-import MathematicsTool from "@/backend/service/agent/tools/math-tool/MathematicsTool";
+import { getDataFromTools } from "@/backend/tools/support/ToolMapper";
+import MathematicsTool from "@/backend/tools/math-tool/MathematicsTool";
 import { ChatOpenAI } from "@langchain/openai";
-import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
-import SarvamLanguageTool from "@/backend/service/agent/tools/sarvam-tool/SarvamLanguageTool";
+import { LLMProvider } from "@/backend/support/LLMProviderMapper";
+import SarvamLanguageTool from "@/backend/tools/sarvam-tool/SarvamLanguageTool";
 
 class AgentService {
   private async getTools(

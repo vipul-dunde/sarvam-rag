@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
-import { qdrantLCVectorStore } from "@/backend/service/vectorstore/qdrant/QdrantVectorStore";
+import { qdrantLCVectorStore } from "@/backend/vector-store/qdrant/QdrantVectorStore";
 import {
   LLMProvider,
   mapToLLMProvider,
-} from "@/backend/service/support/LLMProviderMapper";
+} from "@/backend/support/LLMProviderMapper";
 
 async function getHandler(request: Request) {
   try {

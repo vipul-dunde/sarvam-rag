@@ -1,10 +1,10 @@
-import { LLMProvider } from "@/backend/service/support/LLMProviderMapper";
+import { LLMProvider } from "@/backend/support/LLMProviderMapper";
 import { type Document as LangChainDocument } from "@langchain/core/documents";
 import { QdrantVectorStore } from "@langchain/qdrant";
-import langChainHelperService from "@/backend/service/langchain/LangChainHelperService";
+import langChainHelperService from "@/backend/services/langchain/LangChainHelperService";
 import { QdrantClient } from "@qdrant/qdrant-js";
-import { PrismaClient } from "@prisma/client";
 import { RecursiveCharacterTextSplitter } from "@langchain/textsplitters";
+import { prismaDB } from "@/backend/support/PrismaClient";
 
 class QdrantLCVectorStore {
   public async getSimilarDocs(
@@ -98,7 +98,6 @@ class QdrantLCVectorStore {
       ) as string;
       console.log(`Clearing Qdrant Vector Store: ${collectionName}`);
       await client.deleteCollection(collectionName);
-      const prismaDB = new PrismaClient();
       await prismaDB.topics.deleteMany();
       await client.createCollection(collectionName, {
         vectors: { size: 768, distance: "Cosine" },
