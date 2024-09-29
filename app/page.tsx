@@ -20,6 +20,7 @@ const toolMapper = {
   vectorStoreTool: "VectorStoreTool",
   sarvamLanguageTool: "SarvamLanguageTool",
   mathematicsTool: "MathematicsTool",
+  pythonCodeExecutorTool: "PythonCodeExecutor",
 };
 
 export default function ChatPage() {
@@ -38,7 +39,7 @@ export default function ChatPage() {
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false);
   const [audioAvailable, setAudioAvailable] = useState(false);
-  const [isToolsEnabled, setIsToolsEnabled] = useState(false);
+  const [isToolsEnabled, setIsToolsEnabled] = useState(true);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {

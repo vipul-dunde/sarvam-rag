@@ -7,26 +7,58 @@ import MathematicsTool from "@/backend/tools/math-tool/MathematicsTool";
 import { ChatOpenAI } from "@langchain/openai";
 import { LLMProvider } from "@/backend/support/LLMProviderMapper";
 import SarvamLanguageTool from "@/backend/tools/sarvam-tool/SarvamLanguageTool";
+import PythonTool from "@/backend/tools/python-tool/PythonTool";
 
 class LLMAgentService {
+  private async initializeTool<T>(
+    tool: T,
+    initFunction: (...args: any) => Promise<any>,
+    ...initArgs: any[]
+  ): Promise<any> {
+    return initFunction.apply(tool, initArgs);
+  }
+
   private async getTools(
     llmProvider: LLMProvider,
     query?: string,
   ): Promise<Tool[]> {
-    let tools: Tool[] = [];
-    const vectorStoreTool: VectorStoreTool = new VectorStoreTool();
+    const tools: Tool[] = [];
+
+    const vectorStoreTool = new VectorStoreTool();
+    const mathematicsTool = new MathematicsTool();
+    const sarvamLanguageTool = new SarvamLanguageTool();
+    const pythonTool = new PythonTool();
+
+    // Initialize the tools with the generic function
     tools.push(
-      (await vectorStoreTool.initialiseVectorStoreTool(llmProvider)) as any,
+      (await this.initializeTool(
+        vectorStoreTool,
+        vectorStoreTool.initialiseVectorStoreTool,
+        llmProvider,
+      )) as any,
     );
-    const mathematicsTool: MathematicsTool = new MathematicsTool();
-    tools.push((await mathematicsTool.initialiseMathTool()) as any);
-    const sarvamLanguageTool: SarvamLanguageTool = new SarvamLanguageTool();
     tools.push(
-      (await sarvamLanguageTool.initialiseSarvamLanguageTool(
+      (await this.initializeTool(
+        mathematicsTool,
+        mathematicsTool.initialiseMathTool,
+      )) as any,
+    );
+    tools.push(
+      (await this.initializeTool(
+        sarvamLanguageTool,
+        sarvamLanguageTool.initialiseSarvamLanguageTool,
         llmProvider,
         query,
       )) as any,
     );
+    tools.push(
+      (await this.initializeTool(
+        pythonTool,
+        pythonTool.initialisePythonTool,
+        query,
+      )) as any,
+    );
+
     return tools;
   }
 

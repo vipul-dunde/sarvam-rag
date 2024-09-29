@@ -15,8 +15,23 @@ I am also proficient in Python, ensuring flexibility for future needs.
 ### Overview
 The Sarvam RAG system is designed to meet all the requirements outlined in the problem statement. You can view the full problem details [here](https://docs.google.com/document/d/1y6Ol_9cLP1VPrHUR7NfXcYtAECZRXAhmmTKM5sc24HQ/edit).
 Key Highlights:
-Application Can distinguish between different Tools Such as VectorStoreTool, SarvamLanguageTool, MathTool, and NormalQuery.
+Application Can distinguish between different Tools Such as VectorStoreTool, SarvamLanguageTool, MathTool, PythonCodeExecTool (code will run on actual interpreter), and NormalQuery.
 **SaravamLanguageTool** is additional tool which calls sarvamAI translate api with toolkit Calling.
+
+## DEMO OUTPUTS:
+
+### With Tool Mode Enabled. 
+   - ![img.png](assets/img.png)
+
+1. **Normal Query: (No Tool Code)**
+   - ![img.png](assets/img6.png)
+2. **Query Intended for Vector Store.(Tool Call)**
+   - ![img_2.png](assets/img_2.png)
+3. **Sarvam translate Query. (Tool Call + API ToolKit)**
+   - ![img_3.png](assets/img_3.png)
+4. **Python Code Interpreter. (Tool Call + Code Interpreter).**
+   - ![img_4.png](assets/img_4.png)
+5. **MathTool (Tool call).**
 
 ### Key Features:
    1. **Retrieval-Augmented Generation (RAG)**: Implemented using Qdrant Vector Store and Google Generative AI API.
