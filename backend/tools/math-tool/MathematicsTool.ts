@@ -20,7 +20,7 @@ class MathTool {
       {
         name: MATHEMATICS_TOOL,
         description:
-          "A tool for performing basic and advanced mathematical operations.",
+          'A tool for performing basic and advanced mathematical operations. You should strictly take queries related to operations like "add", "subtract", "multiply", "divide", "sqrt", "power" and perform the requested actions.',
         schema: await this.getMathToolSchema(),
       },
     );
