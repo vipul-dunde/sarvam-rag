@@ -81,7 +81,8 @@ class LLMAgentService {
     let prompt: string = `The user has submitted the following query: "${query}".\n
 1. First, review the tool descriptions to determine if the query can be addressed by any available tool.\n
 2. If the query is specific and suitable for a tool, process it using the appropriate tool.\n
-3. If the query is too general or doesn't match any tool, respond directly without using any tools.`;
+3. If the query is too general or doesn't match any tool, respond directly without using any tools.
+4. Make sure not to pass Greeting and very general queries to tools.`;
 
     const toolResponse: AIMessageChunk = await bindedLLM.invoke(prompt);
     if (toolResponse.tool_calls && toolResponse.tool_calls?.length == 1) {
