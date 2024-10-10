@@ -7,6 +7,7 @@ import {
   mapToLLMProvider,
 } from "@/backend/support/LLMProviderMapper";
 import langChainHelperService from "@/backend/services/langchain/LangChainHelperService";
+import { prismaDB } from "@/backend/support/PrismaClient";
 
 async function postHandler(request: Request) {
   try {
@@ -20,6 +21,20 @@ async function postHandler(request: Request) {
       await langChainHelperService.getInitialisedLLMFromProviderWithLangChain(
         llmProvider,
       );
+
+    try {
+      const now = new Date();
+      const formattedDate = `${String(now.getDate()).padStart(2, "0")}-${String(now.getMonth() + 1).padStart(2, "0")}-${now.getFullYear()}`;
+      const formattedTime = `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}:${String(now.getSeconds()).padStart(2, "0")}`;
+      await prismaDB.topics.create({
+        data: {
+          fileName: JSON.stringify(body.query),
+          Description: `${formattedDate} ${formattedTime}`,
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    }
 
     const prompt: string = `Respond to the following message: ${body.query}`;
     const response: AIMessageChunk = await llm.invoke(prompt);

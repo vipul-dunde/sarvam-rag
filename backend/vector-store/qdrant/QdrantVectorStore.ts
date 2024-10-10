@@ -98,7 +98,16 @@ class QdrantLCVectorStore {
       ) as string;
       console.log(`Clearing Qdrant Vector Store: ${collectionName}`);
       await client.deleteCollection(collectionName);
-      await prismaDB.topics.deleteMany();
+      try {
+        console.log("Clearing DB");
+        if (llmProvider === LLMProvider.GoogleAI) {
+          await prismaDB.topicsGoogle.deleteMany();
+        } else {
+          await prismaDB.topicsOpenAI.deleteMany();
+        }
+      } catch (e) {
+        console.error(`Error clearing DB: ${(e as Error).message}`);
+      }
       await client.createCollection(collectionName, {
         vectors: { size: 768, distance: "Cosine" },
       });
