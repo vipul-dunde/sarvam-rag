@@ -12,21 +12,20 @@ interface MathToolArgs extends MathOperands {
 }
 
 class MathTool {
-  public async initialiseMathTool() {
+  public async initialiseMathTool(query?: string) {
     return tool(
       async function ({ operation, operands }: MathToolArgs): Promise<any> {
         console.log(operation, operands);
       }.bind(this),
       {
         name: MATHEMATICS_TOOL,
-        description:
-          'A tool for performing basic and advanced mathematical operations. You should strictly take queries related to operations like "add", "subtract", "multiply", "divide", "sqrt", "power" and perform the requested actions.',
-        schema: await this.getMathToolSchema(),
+        description: `A tool for performing basic and advanced mathematical operations. Based in Query Provided by user : ${query}\n You should strictly take queries related to operations like "add", "subtract", "multiply", "divide", "sqrt", "power" and perform the requested actions or query mentioning about doing basic mathematical operation.`,
+        schema: await this.getMathToolSchema(query),
       },
     );
   }
 
-  private async getMathToolSchema() {
+  private async getMathToolSchema(query?: string) {
     return z
       .object({
         operation: z

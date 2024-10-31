@@ -41,6 +41,7 @@ class LLMAgentService {
       (await this.initializeTool(
         mathematicsTool,
         mathematicsTool.initialiseMathTool,
+        query,
       )) as any,
     );
     tools.push(
